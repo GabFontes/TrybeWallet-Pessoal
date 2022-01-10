@@ -1,7 +1,7 @@
 import React from 'react';
-import { userLogin } from '../actions';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { userLogin } from '../actions';
 
 class Login extends React.Component {
   constructor() {
@@ -25,7 +25,7 @@ class Login extends React.Component {
   }
 
   formValidation() {
-    const minLenght = 6
+    const minLenght = 6;
     const { email, senha } = this.state;
     const emailRegex = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
     // créditos do 'emailRegex' ao Luiz Wanderson
@@ -35,8 +35,7 @@ class Login extends React.Component {
       this.setState(
         { isButtonDisabled: false },
       );
-    }
-    else {
+    } else {
       this.setState(
         { isButtonDisabled: true },
       );
@@ -56,7 +55,7 @@ class Login extends React.Component {
               name="email"
               id="email"
               data-testid="email-input"
-              onChange={this.handleChange}
+              onChange={ this.handleChange }
             />
           </label>
           <label htmlFor="password">
@@ -66,10 +65,16 @@ class Login extends React.Component {
               name="senha"
               id="password"
               data-testid="password-input"
-              onChange={this.handleChange}
+              onChange={ this.handleChange }
             />
           </label>
-          <button type="button" onClick={() => { emailDispatch(email); history.push('/carteira') }} disabled={isButtonDisabled}>Entrar</button>
+          <button
+            type="button"
+            onClick={ () => { emailDispatch(email); history.push('/carteira'); } }
+            disabled={ isButtonDisabled }
+          >
+            Entrar
+          </button>
         </form>
       </div>
     );
@@ -78,12 +83,11 @@ class Login extends React.Component {
 
 const mapDispatchToProps = (dispatch) => ({
   emailDispatch: (state) => dispatch(userLogin(state)),
-})
+});
 
 Login.propTypes = {
   emailDispatch: PropTypes.instanceOf(Object).isRequired,
   history: PropTypes.instanceOf(Object).isRequired,
-}
-
+};
 
 export default connect(null, mapDispatchToProps)(Login);
