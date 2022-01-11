@@ -9,4 +9,4 @@ export const userLogin = (payload) => ({
 export const expenses = (payload) => ({
   type: SEND_EXPENSES,
   payload,
-})
+});
