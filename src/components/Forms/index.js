@@ -13,6 +13,9 @@ const INITIAL_STATE = {
   tag: 'Alimentação',
 };
 
+const metodos = ['Dinheiro', 'Cartão de crédito', 'Cartão de débito'];
+const categorias = ['Alimentação', 'Lazer', 'Trabalho', 'Transporte', 'Saúde'];
+
 export class Form extends Component {
   constructor() {
     super();
@@ -24,7 +27,7 @@ export class Form extends Component {
     };
 
     this.handleChange = this.handleChange.bind(this);
-    this.resetInputs = this.resetInputs.bind(this);
+    this.handleClick = this.handleClick.bind(this);
   }
 
   componentDidMount() {
@@ -37,6 +40,21 @@ export class Form extends Component {
     });
   }
 
+  async handleClick(forms) {
+    const { id, value, description, currency, method, tag, exchangeRates } = this.state;
+    const apiRates = await currencies();
+    this.setState({
+      id: id + 1,
+      value: 0,
+      description: '',
+      currency: 'USD',
+      method: 'Dinheiro',
+      tag: 'Alimentação',
+      exchangeRates: apiRates,
+    });
+    forms({ id, value, description, currency, method, tag, exchangeRates });
+  }
+
   async fetchApi() {
     const exchangeRates = await currencies();
     const keys = Object.keys(exchangeRates);
@@ -46,35 +64,21 @@ export class Form extends Component {
     });
   }
 
-  async updateExchanges() {
-    const exchangeRates = await currencies();
-    this.setState({
-      exchangeRates,
-    });
-  }
-
-  resetInputs() {
-    this.setState({
-      ...INITIAL_STATE,
-    });
-  }
-
   render() {
     const { forms } = this.props;
     const {
       keys,
-      id,
       value,
       description,
-      currency,
       method,
       tag,
-      exchangeRates,
+      currency,
     } = this.state;
+
     return (
       <div>
         <label htmlFor="value">
-          Valor
+          Valor:
           <input
             value={ value }
             onChange={ this.handleChange }
@@ -86,7 +90,7 @@ export class Form extends Component {
         </label>
 
         <label htmlFor="description">
-          Descrição
+          Descrição:
           <input
             value={ description }
             onChange={ this.handleChange }
@@ -98,7 +102,7 @@ export class Form extends Component {
         </label>
 
         <label htmlFor="currency">
-          Moeda
+          Moeda:
           <select
             value={ currency }
             onChange={ this.handleChange }
@@ -121,7 +125,7 @@ export class Form extends Component {
         </label>
 
         <label htmlFor="method">
-          Método de Pagamento
+          Método de Pagamento:
           <select
             value={ method }
             onChange={ this.handleChange }
@@ -129,14 +133,21 @@ export class Form extends Component {
             name="method"
             id="method"
           >
-            <option value="dinheiro">Dinheiro</option>
-            <option value="credito">Cartão de Crédito</option>
-            <option value="debito">Cartão de Débito</option>
+            {
+              metodos.map((metodo) => (
+                <option
+                  key={ metodo }
+                  value={ metodo }
+                >
+                  {metodo}
+                </option>
+              ))
+            }
           </select>
         </label>
 
         <label htmlFor="tag">
-          Categoria
+          Categoria:
           <select
             value={ tag }
             onChange={ this.handleChange }
@@ -144,22 +155,22 @@ export class Form extends Component {
             name="tag"
             id="tag"
           >
-            <option>Alimentação</option>
-            <option>Lazer</option>
-            <option>Trabalho</option>
-            <option>Transporte</option>
-            <option>Saúde</option>
+            {
+              categorias.map((categoria) => (
+                <option
+                  key={ categoria }
+                  value={ categoria }
+                >
+                  {categoria}
+                </option>
+              ))
+            }
           </select>
         </label>
 
         <button
           type="button"
-          onClick={ () => {
-            forms({ id, value, description, currency, method, tag, exchangeRates });
-            this.setState((prevState) => ({
-              id: prevState.id + 1,
-            }), this.updateExchanges);
-          } }
+          onClick={ () => this.handleClick(forms) }
         >
           Adicionar despesa
         </button>
