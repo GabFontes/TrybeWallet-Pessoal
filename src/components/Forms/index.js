@@ -4,23 +4,27 @@ import { connect } from 'react-redux';
 import { expenses } from '../../actions';
 import currencies from '../../Fetch';
 
+const INITIAL_STATE = {
+  id: 0,
+  value: 0,
+  description: '',
+  currency: 'USD',
+  method: 'Dinheiro',
+  tag: 'Alimentação',
+};
+
 export class Form extends Component {
   constructor() {
     super();
 
     this.state = {
-      id: 0,
-      value: '',
-      description: '',
-      currency: 'USD',
-      method: 'Dinheiro',
-      tag: 'Alimentação',
+      ...INITIAL_STATE,
       exchangeRates: {},
       keys: [],
     };
 
     this.handleChange = this.handleChange.bind(this);
-    this.fetchApi = this.handleChange.bind(this);
+    this.resetInputs = this.resetInputs.bind(this);
   }
 
   componentDidMount() {
@@ -34,15 +38,6 @@ export class Form extends Component {
   }
 
   async fetchApi() {
-    const moedas = await currencies();
-    const keys = Object.keys(moedas);
-    this.setState({
-      keys,
-      exchangeRates: moedas,
-    });
-  }
-
-  async updateRates() {
     const exchangeRates = await currencies();
     const keys = Object.keys(exchangeRates);
     this.setState({
@@ -51,9 +46,23 @@ export class Form extends Component {
     });
   }
 
+  async updateExchanges() {
+    const exchangeRates = await currencies();
+    this.setState({
+      exchangeRates,
+    });
+  }
+
+  resetInputs() {
+    this.setState({
+      ...INITIAL_STATE,
+    });
+  }
+
   render() {
     const { forms } = this.props;
-    const { keys,
+    const {
+      keys,
       id,
       value,
       description,
@@ -67,8 +76,9 @@ export class Form extends Component {
         <label htmlFor="value">
           Valor
           <input
+            value={ value }
             onChange={ this.handleChange }
-            type="text"
+            type="number"
             data-testid="value-input"
             id="value"
             name="value"
@@ -78,6 +88,7 @@ export class Form extends Component {
         <label htmlFor="description">
           Descrição
           <input
+            value={ description }
             onChange={ this.handleChange }
             type="text"
             data-testid="description-input"
@@ -89,6 +100,7 @@ export class Form extends Component {
         <label htmlFor="currency">
           Moeda
           <select
+            value={ currency }
             onChange={ this.handleChange }
             data-testid="currency-input"
             name="currency"
@@ -102,7 +114,7 @@ export class Form extends Component {
                     value={ `${[moeda]}` }
                     data-testid={ [moeda] }
                   >
-                    { moeda }
+                    {moeda}
                   </option>))
             }
           </select>
@@ -111,6 +123,7 @@ export class Form extends Component {
         <label htmlFor="method">
           Método de Pagamento
           <select
+            value={ method }
             onChange={ this.handleChange }
             data-testid="method-input"
             name="method"
@@ -125,6 +138,7 @@ export class Form extends Component {
         <label htmlFor="tag">
           Categoria
           <select
+            value={ tag }
             onChange={ this.handleChange }
             data-testid="tag-input"
             name="tag"
@@ -144,7 +158,7 @@ export class Form extends Component {
             forms({ id, value, description, currency, method, tag, exchangeRates });
             this.setState((prevState) => ({
               id: prevState.id + 1,
-            }), this.updateRates);
+            }), this.updateExchanges);
           } }
         >
           Adicionar despesa
@@ -158,8 +172,8 @@ const mapDispatchToProps = (dispatch) => ({
   forms: (state) => dispatch(expenses(state)),
 });
 
+export default connect(null, mapDispatchToProps)(Form);
+
 Form.propTypes = {
   forms: PropTypes.instanceOf(Object).isRequired,
 };
-
-export default connect(null, mapDispatchToProps)(Form);
