@@ -4,17 +4,18 @@ import { connect } from 'react-redux';
 import { expenses } from '../../actions';
 import currencies from '../../Fetch';
 
+const alimentacao = 'Alimentação';
+const metodos = ['Dinheiro', 'Cartão de crédito', 'Cartão de débito'];
+const categorias = ['Alimentação', 'Lazer', 'Trabalho', 'Transporte', 'Saúde'];
+
 const INITIAL_STATE = {
   id: 0,
   value: 0,
   description: '',
   currency: 'USD',
   method: 'Dinheiro',
-  tag: 'Alimentação',
+  tag: alimentacao,
 };
-
-const metodos = ['Dinheiro', 'Cartão de crédito', 'Cartão de débito'];
-const categorias = ['Alimentação', 'Lazer', 'Trabalho', 'Transporte', 'Saúde'];
 
 export class Form extends Component {
   constructor() {
@@ -49,7 +50,7 @@ export class Form extends Component {
       description: '',
       currency: 'USD',
       method: 'Dinheiro',
-      tag: 'Alimentação',
+      tag: alimentacao,
       exchangeRates: apiRates,
     });
     forms({ id, value, description, currency, method, tag, exchangeRates });
