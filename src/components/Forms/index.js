@@ -59,6 +59,7 @@ export class Form extends Component {
   async fetchApi() {
     const exchangeRates = await currencies();
     const keys = Object.keys(exchangeRates);
+    console.log(keys);
     this.setState({
       keys,
       exchangeRates,
